@@ -1,0 +1,6 @@
+**/target
+**/.*
+!.gitignore
+!.dockerignore
+!.editorconfig
+*.iml
