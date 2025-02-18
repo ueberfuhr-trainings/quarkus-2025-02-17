@@ -1,0 +1,12 @@
+GET {{server}}/customers
+Accept: application/xml
+
+> {%
+
+  client.test('Content Negotation with XML', () => {
+    client.assert(response.status === 406);
+  });
+
+%}
+
+###
