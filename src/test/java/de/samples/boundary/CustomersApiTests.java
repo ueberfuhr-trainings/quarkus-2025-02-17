@@ -1,4 +1,4 @@
-package de.samples;
+package de.samples.boundary;
 
 
 import io.quarkus.test.junit.QuarkusTest;

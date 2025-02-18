@@ -1,17 +1,17 @@
-package de.samples;
+package de.samples.boundary;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
-public class Customer {
+public class CustomerDto {
 
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private UUID uuid;
   private String name;
   private LocalDate birthdate;
-  private CustomerState state = CustomerState.ACTIVE;
+  private String state = "active";
 
   public UUID getUuid() {
     return uuid;
@@ -37,11 +37,11 @@ public class Customer {
     this.birthdate = birthdate;
   }
 
-  public CustomerState getState() {
+  public String getState() {
     return state;
   }
 
-  public void setState(CustomerState state) {
+  public void setState(String state) {
     this.state = state;
   }
 }
