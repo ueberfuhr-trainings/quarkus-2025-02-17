@@ -4,6 +4,7 @@ import de.samples.domain.Customer;
 import de.samples.domain.CustomerState;
 import org.mockito.ArgumentMatcher;
 
+// @UtilityClass??
 public final class CustomerMatchers {
 
   private CustomerMatchers() {

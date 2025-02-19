@@ -1,10 +1,14 @@
 package de.samples.boundary;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
+@Setter
+@Getter
 public class CustomerDto {
 
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
@@ -13,35 +17,4 @@ public class CustomerDto {
   private LocalDate birthdate;
   private String state = "active";
 
-  public UUID getUuid() {
-    return uuid;
-  }
-
-  public void setUuid(UUID uuid) {
-    this.uuid = uuid;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public LocalDate getBirthdate() {
-    return birthdate;
-  }
-
-  public void setBirthdate(LocalDate birthdate) {
-    this.birthdate = birthdate;
-  }
-
-  public String getState() {
-    return state;
-  }
-
-  public void setState(String state) {
-    this.state = state;
-  }
 }

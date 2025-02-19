@@ -18,9 +18,11 @@ public class CustomersServiceTests {
 
   @Test
   void when_create_customer_then_uuid_generated() {
-    Customer customer = new Customer();
-    customer.setName("John Doe");
-    customer.setBirthdate(LocalDate.of(1990, Month.MAY, 1));
+    var customer = Customer
+      .builder()
+      .name("John Doe")
+      .birthdate(LocalDate.of(1990, Month.MAY, 1))
+      .build();
 
     customersService.createCustomer(customer);
 
