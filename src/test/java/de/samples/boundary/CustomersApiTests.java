@@ -1,6 +1,7 @@
 package de.samples.boundary;
 
 
+import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.DisplayName;
@@ -21,6 +22,7 @@ import static org.hamcrest.Matchers.either;
 
 @QuarkusTest
 @Tag("API")
+@TestTransaction
 class CustomersApiTests {
 
   @DisplayName("GET /customers -> 200")
