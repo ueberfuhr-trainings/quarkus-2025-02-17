@@ -1,17 +1,17 @@
 package de.samples.domain;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 
 @ApplicationScoped
+@RequiredArgsConstructor
 public class CustomersService {
 
-  @Inject
-  CustomersSink sink;
+  private final CustomersSink sink;
 
   public Stream<Customer> getCustomers() {
     return sink.findCustomers();

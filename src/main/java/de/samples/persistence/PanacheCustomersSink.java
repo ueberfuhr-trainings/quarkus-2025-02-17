@@ -4,8 +4,8 @@ import de.samples.domain.Customer;
 import de.samples.domain.CustomersSink;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Typed;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -13,12 +13,11 @@ import java.util.stream.Stream;
 
 @ApplicationScoped
 @Typed(CustomersSink.class)
+@RequiredArgsConstructor
 public class PanacheCustomersSink implements CustomersSink {
 
-  @Inject
-  CustomerEntityRepository repo;
-  @Inject
-  CustomerEntityMapper mapper;
+  private final CustomerEntityRepository repo;
+  private final CustomerEntityMapper mapper;
 
   @Override
   public Stream<Customer> findCustomers() {
