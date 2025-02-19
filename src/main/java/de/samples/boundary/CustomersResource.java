@@ -1,5 +1,7 @@
-package de.samples;
+package de.samples.boundary;
 
+import de.samples.domain.CustomersService;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -16,12 +18,8 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 
 import java.net.URI;
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Path("/customers")
@@ -29,30 +27,24 @@ public class CustomersResource {
 
   @Context
   UriInfo uriInfo;
-
-
-  private final HashMap<UUID, Customer> customers = new HashMap<>();
-
-  {
-    Customer customer = new Customer();
-    customer.setUuid(UUID.randomUUID());
-    customer.setName("Tom Mayer");
-    customer.setState(CustomerState.ACTIVE);
-    customer.setBirthdate(LocalDate.of(1990, Month.JULY, 1));
-    customers.put(customer.getUuid(), customer);
-  }
+  @Inject
+  CustomersService customersService;
+  @Inject
+  CustomerDtoMapper customerDtoMapper;
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  public Collection<Customer> getCustomers(
+  public Collection<CustomerDto> getCustomers(
     @QueryParam("state")
     String state
   ) {
     if (null != state && !List.of("active", "locked", "disabled").contains(state)) {
       throw new BadRequestException("Invalid state: " + state);
     }
-    return customers
-      .values();
+    return customersService
+      .getCustomers()
+      .map(customerDtoMapper::map)
+      .toList();
   }
 
   private static UUID fromParameter(String uuid) {
@@ -66,14 +58,15 @@ public class CustomersResource {
   @GET
   @Path("/{uuid}")
   @Produces(MediaType.APPLICATION_JSON)
-  public Customer getCustomer(
+  public CustomerDto getCustomer(
     // if we use UUID here directly,
     // JAX-RS will return 404 if the path parameter is syntactically invalid
     @PathParam("uuid")
     String uuid
   ) {
-    return Optional
-      .ofNullable(customers.get(fromParameter(uuid)))
+    return customersService
+      .getCustomer(fromParameter(uuid))
+      .map(customerDtoMapper::map)
       .orElseThrow(() -> new NotFoundException("Customer not found: " + uuid));
   }
 
@@ -81,25 +74,23 @@ public class CustomersResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public Response createCustomer(
-    Customer customer
+    CustomerDto customerDto
   ) {
 
-    if (null == customer.getName()) {
+    if (null == customerDto.getName()) {
       throw new BadRequestException("Customer name is required");
     }
-
-    var uuid = UUID.randomUUID();
-    customer.setUuid(uuid);
-    customers.put(uuid, customer);
+    var customer = customerDtoMapper.map(customerDto);
+    customersService.createCustomer(customer);
 
     String location = uriInfo.getAbsolutePathBuilder()
-      .path(uuid.toString())
+      .path(customer.getUuid().toString())
       .build()
       .toString();
 
     return Response
       .created(URI.create(location))
-      .entity(customer)
+      .entity(customerDtoMapper.map(customer))
       .build();
   }
 
@@ -111,7 +102,7 @@ public class CustomersResource {
     @PathParam("uuid")
     String uuid
   ) {
-    if (null == customers.remove(fromParameter(uuid))) {
+    if (!customersService.deleteCustomer(fromParameter(uuid))) {
       throw new NotFoundException("Customer not found: " + uuid);
     }
   }
